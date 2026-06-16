@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Diagnóstico Narrativo — Laura Veridiana</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #f9f8f6; color: #1a1a1a; min-height: 100vh; }
+#app { max-width: 640px; margin: 0 auto; padding: 2rem 1.5rem 4rem; }
+.screen { display: none; }
+.screen.active { display: block; }
+
+.welcome-top { text-align: center; padding: 2.5rem 0 2rem; }
+.avatar { font-size: 36px; margin: 0 auto 1rem; text-align: center; }
+.welcome-top h1 { font-size: 24px; font-weight: 600; margin-bottom: 4px; }
+.by { font-size: 13px; color: #aaa; letter-spacing: 0.5px; margin-bottom: 8px; }
+.meta { font-size: 14px; color: #888; }
+
+.card { background: #fff; border: 1px solid #ebebeb; border-radius: 16px; padding: 1.5rem; margin-bottom: 1.25rem; }
+.card p { font-size: 15px; line-height: 1.75; color: #333; margin-bottom: 0.85rem; }
+.card p:last-child { margin-bottom: 0; }
+
+.info-list { background: #fff; border: 1px solid #ebebeb; border-radius: 16px; overflow: hidden; margin-bottom: 2rem; }
+.info-item { display: flex; align-items: center; gap: 12px; padding: 14px 18px; border-bottom: 1px solid #f0f0f0; font-size: 14px; color: #555; }
+.info-item:last-child { border-bottom: none; }
+
+.field-label { font-size: 13px; font-weight: 600; color: #555; display: block; margin-bottom: 6px; }
+input[type=text], input[type=email] { width: 100%; padding: 13px 14px; border-radius: 10px; border: 1.5px solid #e0e0e0; background: #fafafa; font-size: 15px; font-family: inherit; color: #111; transition: border-color 0.15s; margin-bottom: 1.25rem; }
+input:focus { outline: none; border-color: #5340c2; background: #fff; }
+
+.progress-wrap { margin-bottom: 2rem; }
+.progress-meta { display: flex; justify-content: space-between; font-size: 13px; color: #999; margin-bottom: 8px; }
+.progress-track { height: 4px; background: #ebebeb; border-radius: 4px; }
+.progress-fill { height: 4px; background: #5340c2; border-radius: 4px; transition: width 0.4s ease; }
+
+.transition-wrap { text-align: center; padding: 3rem 1rem; }
+.sec-badge { display: inline-block; font-size: 12px; font-weight: 600; color: #5340c2; background: #e8e4fd; padding: 5px 14px; border-radius: 20px; margin-bottom: 1.25rem; }
+.transition-wrap h2 { font-size: 22px; font-weight: 600; margin-bottom: 0.75rem; }
+.transition-wrap p { font-size: 15px; color: #666; line-height: 1.75; max-width: 460px; margin: 0 auto 2.5rem; }
+
+.q-card { background: #fff; border: 1px solid #ebebeb; border-radius: 16px; padding: 1.75rem; margin-bottom: 1rem; }
+.q-section-label { font-size: 12px; color: #aaa; font-weight: 500; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 0.75rem; }
+.q-text { font-size: 17px; font-weight: 600; color: #111; line-height: 1.55; margin-bottom: 0.6rem; }
+.q-sub { font-size: 14px; color: #666; line-height: 1.7; margin-bottom: 0.75rem; }
+.q-hint { font-size: 13px; color: #aaa; line-height: 1.65; margin-bottom: 1rem; font-style: italic; }
+textarea { width: 100%; min-height: 130px; resize: vertical; font-size: 15px; padding: 14px; border-radius: 10px; border: 1.5px solid #e0e0e0; background: #fafafa; color: #111; font-family: inherit; line-height: 1.65; transition: border-color 0.15s; }
+textarea:focus { outline: none; border-color: #5340c2; background: #fff; }
+.q-encourage { font-size: 13px; color: #bbb; margin-top: 8px; }
+.sync-indicator { font-size: 12px; color: #bbb; text-align: right; margin: 6px 0 4px; min-height: 18px; }
+
+.btn-primary { display: block; width: 100%; padding: 15px; background: #5340c2; border: none; border-radius: 12px; font-size: 15px; font-weight: 600; color: #fff; cursor: pointer; transition: background 0.15s; }
+.btn-primary:hover { background: #4330a8; }
+.nav-row { display: flex; gap: 12px; margin-top: 0.25rem; }
+.btn-back { padding: 12px 20px; background: #fff; border: 1.5px solid #e0e0e0; border-radius: 10px; font-size: 14px; color: #555; cursor: pointer; flex-shrink: 0; }
+.btn-back:hover { background: #f5f5f5; }
+.btn-next { flex: 1; padding: 13px; background: #5340c2; border: none; border-radius: 10px; font-size: 15px; font-weight: 600; color: #fff; cursor: pointer; }
+.btn-next:hover { background: #4330a8; }
+
+.finish-wrap { text-align: center; padding: 3rem 1rem; }
+.finish-wrap h2 { font-size: 24px; font-weight: 600; margin-bottom: 0.75rem; }
+.finish-wrap p { font-size: 15px; color: #666; line-height: 1.75; margin-bottom: 0.5rem; }
+.badge-success { display: inline-block; background: #e4f5ec; color: #1e8a4a; font-size: 14px; font-weight: 600; padding: 8px 20px; border-radius: 20px; margin-top: 1.5rem; }
+.error-msg { font-size: 13px; color: #c0392b; margin-bottom: 1rem; display: none; }
+</style>
+</head>
+<body>
+<div id="app">
+
+  <div id="screen-welcome" class="screen active">
+    <div class="welcome-top">
+      <div class="avatar">✦</div>
+      <h1>Diagnóstico Narrativo</h1>
+      <p class="by">por Laura Veridiana</p>
+      <p class="meta">28 perguntas · 30–40 min</p>
+    </div>
+    <div class="card">
+      <p>Antes da nossa primeira sessão, preciso entender profundamente sua história, seu mercado e seus clientes.</p>
+      <p>Este diagnóstico não é um teste e não existem respostas certas. O objetivo é me dar contexto para que nossa primeira conversa já comece no nível estratégico.</p>
+      <p>Responda como se estivesse conversando comigo. Não precisa buscar respostas perfeitas ou "bonitas". O mais importante é ser honesto.</p>
+      <p>Se você tiver materiais como landing pages, apresentações comerciais ou propostas, pode me enviar também.</p>
+      <p>Após me enviar seu questionário, precisarei de <strong>dois dias úteis</strong> antes da nossa primeira call para criar o Blueprint da sua marca.</p>
+    </div>
+    <div class="info-list">
+      <div class="info-item">⏱ Reserve 30 a 40 minutos para responder com calma</div>
+      <div class="info-item">💬 Responda como se estivesse conversando comigo</div>
+      <div class="info-item">✨ Nenhuma resposta é perda de tempo — seja honesto</div>
+    </div>
+    <button class="btn-primary" onclick="show('identify')">Começar diagnóstico →</button>
+  </div>
+
+  <div id="screen-identify" class="screen">
+    <div style="padding:2rem 0 1rem;">
+      <h2 style="font-size:20px;font-weight:600;margin-bottom:0.5rem;">Antes de começar…</h2>
+      <p style="font-size:15px;color:#666;line-height:1.7;margin-bottom:2rem;">Preciso saber quem está respondendo para associar suas respostas ao seu processo.</p>
+      <label class="field-label" for="field-nome">Seu nome completo</label>
+      <input type="text" id="field-nome" placeholder="Ex: Ana Paula Souza">
+      <label class="field-label" for="field-email">Seu e-mail</label>
+      <input type="email" id="field-email" placeholder="Ex: ana@exemplo.com">
+      <p class="error-msg" id="identify-error">Por favor, preencha nome e e-mail antes de continuar.</p>
+      <button class="btn-primary" onclick="startQuiz()">Começar →</button>
+    </div>
+  </div>
+
+  <div id="screen-question" class="screen">
+    <div class="progress-wrap">
+      <div class="progress-meta">
+        <span id="prog-label">Pergunta 1 de 28</span>
+        <span id="prog-remaining">27 restantes</span>
+      </div>
+      <div class="progress-track"><div class="progress-fill" id="prog-fill" style="width:0%"></div></div>
+    </div>
+    <div id="question-area"></div>
+    <div class="sync-indicator" id="sync-status"></div>
+    <div class="nav-row">
+      <button class="btn-back" id="btn-back" onclick="goBack()">← Voltar</button>
+      <button class="btn-next" id="btn-next" onclick="goNext()">Próxima →</button>
+    </div>
+  </div>
+
+  <div id="screen-transition" class="screen">
+    <div class="transition-wrap">
+      <div class="sec-badge" id="trans-badge"></div>
+      <h2 id="trans-title"></h2>
+      <p id="trans-desc"></p>
+      <button class="btn-primary" style="max-width:300px;margin:0 auto;" onclick="continueTransition()">Continuar →</button>
+    </div>
+  </div>
+
+  <div id="screen-finish" class="screen">
+    <div class="finish-wrap">
+      <div style="font-size:48px;margin-bottom:1.5rem;">✦</div>
+      <h2>Diagnóstico concluído!</h2>
+      <p>Obrigada por dedicar esse tempo com tanta honestidade.</p>
+      <p>Suas respostas são a matéria-prima do Blueprint da sua marca.<br>Aguarde até <strong>dois dias úteis</strong> para nossa primeira call.</p>
+      <span class="badge-success">✓ Respostas salvas com sucesso</span>
+    </div>
+  </div>
+
+</div>
+<script>
+var APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyIYGNsCV4I17H8aJDN4wCIfClOIqnLvxw934EMnTm7_CKbAJYd5F7lRQEZ_7ck80Mk/exec";
+
+var respondentName = "";
+var respondentEmail = "";
+var sessionId = "";
+var cur = 0;
+var answers = new Array(28).fill("");
+var pendingNext = null;
+
+var sections = [
+  { num:1, label:"Sua história com o que você faz",
+    trans:{ badge:"Seção 1 de 7 concluída ✓", title:"🌱 Ótimo começo!", desc:"Você acabou de contar de onde veio. Agora vamos falar sobre o mercado em que você atua — o que te incomoda e o que você vê que os outros ainda não enxergam." }},
+  { num:2, label:"O que te incomoda no seu mercado",
+    trans:{ badge:"Seção 2 de 7 concluída ✓", title:"🔥 Isso é ouro.", desc:"Sua visão crítica do mercado já diz muito sobre quem você é. Agora vamos falar das pessoas que você serve — os clientes que fazem seu trabalho ter sentido." }},
+  { num:3, label:"Sobre seus clientes",
+    trans:{ badge:"Seção 3 de 7 concluída ✓", title:"🤝 Você conhece bem quem atende.", desc:"Agora vamos aprofundar: o que essas pessoas sentem, o que as trava e o que elas realmente precisam." }},
+  { num:4, label:"Dores, dúvidas e mitos do cliente",
+    trans:{ badge:"Seção 4 de 7 concluída ✓", title:"🎯 Você foi fundo.", desc:"Entender o problema do cliente nesse nível é raro. Vamos ver agora o outro lado da moeda: a transformação que você provoca." }},
+  { num:5, label:"A transformação",
+    trans:{ badge:"Seção 5 de 7 concluída ✓", title:"✨ Poderoso.", desc:"Você descreveu com clareza o antes e o depois. Agora quero entender você — sua personalidade, seu estilo, como você se comunica." }},
+  { num:6, label:"Sua personalidade e seu estilo",
+    trans:{ badge:"Seção 6 de 7 concluída ✓", title:"🚀 Quase lá!", desc:"Você chegou à última pergunta. É curta, mas costuma revelar muito." }},
+  { num:7, label:"Pergunta poderosa", trans:null }
+];
+
+var questions = [
+  { s:1, q:1,  text:"Como você começou a trabalhar com isso?", sub:"Teve algum momento, experiência ou situação que fez você escolher essa área?" },
+  { s:1, q:2,  text:"O que fez você continuar nessa profissão até hoje?", sub:"O que te mantém nesse trabalho mesmo depois de todas as dificuldades?" },
+  { s:1, q:3,  text:"Existe algum momento do seu trabalho que te marcou muito?", sub:"Pode ser um cliente, um caso ou um resultado que você nunca esqueceu." },
+  { s:1, q:4,  text:"Existe algo que você acredita sobre seu trabalho ou seu mercado que muitas pessoas não perceberam ainda ou até discordariam de você?", sub:"Explique." },
+  { s:2, q:5,  text:"O que você não suporta mais ver acontecendo no seu mercado?", sub:"Algo que outros profissionais fazem e que te incomoda profundamente." },
+  { s:2, q:6,  text:"Existe alguma prática comum no seu mercado que parece bonita ou popular, mas que você acredita que não resolve o problema das pessoas de verdade?" },
+  { s:2, q:7,  text:"Na sua opinião, por que o problema que você resolve continua acontecendo com tantas pessoas?", sub:"O que o mercado, a cultura ou os próprios profissionais estão fazendo que mantém esse problema existindo?" },
+  { s:3, q:8,  text:"Pense nos clientes que você mais gosta de atender. Quem são essas pessoas?", sub:"Como elas normalmente chegam até você?" },
+  { s:3, q:9,  text:"Na sua opinião, o que você faz de diferente da maioria dos profissionais da sua área?", sub:"Não precisa ser algo técnico. Pode ser forma de pensar, conduzir o processo ou enxergar o problema." },
+  { s:4, q:10, text:"Qual é o principal problema que essas pessoas costumam ter quando chegam até você?" },
+  { s:4, q:11, text:"Quando essas pessoas estão vivendo esse problema, quais são as maiores frustrações delas no dia a dia?" },
+  { s:4, q:12, text:"O que normalmente impede essas pessoas de resolver esse problema antes de chegar até você?", sub:"Pode ser medo, falta de informação, dinheiro, experiências ruins, etc." },
+  { s:4, q:13, text:"Que tipo de coisa essas pessoas acreditam sobre esse problema que nem sempre é verdade?", sub:"Alguma crença errada, mito ou ideia muito comum." },
+  { s:4, q:14, text:"Existe algo importante sobre esse problema que seus clientes geralmente só descobrem quando começam a trabalhar com você?", sub:"Algo que eles normalmente não sabiam antes." },
+  { s:4, q:15, text:"Além de resolver esse problema prático, o que essas pessoas realmente desejam no fundo?", hint:"Pode ser algo como: liberdade, segurança, reconhecimento, autoestima, estabilidade, tranquilidade, autonomia…" },
+  { s:4, q:16, text:"Se essa pessoa não resolver esse problema, o que pode acontecer no futuro?" },
+  { s:5, q:17, text:"Imagine um cliente chegando até você no pior momento desse problema.", sub:"Se isso fosse uma cena de filme, como seria essa cena?" },
+  { s:5, q:18, text:"Agora imagine essa mesma pessoa depois de resolver esse problema com a sua ajuda.", sub:"Como seria essa cena? O que mudou na vida dela?" },
+  { s:5, q:19, text:"Quais são os principais benefícios que essa pessoa ganha depois de resolver esse problema?", hint:"Podem ser benefícios materiais, financeiros, emocionais ou sociais." },
+  { s:5, q:20, text:"Depois dessa transformação, quem essa pessoa se torna?", sub:"Como ela passa a se enxergar, agir, tomar decisões e viver a própria vida?" },
+  { s:5, q:21, text:"Se você tiver algum exemplo real de cliente que teve uma grande transformação, conte essa história.", sub:"Se possível, inclua resultados concretos." },
+  { s:6, q:22, text:"Como você descreveria sua personalidade?", hint:"Exemplos: mais direto ou mais diplomático, mais racional ou mais emocional, mais provocador ou mais conciliador, mais técnico ou mais intuitivo." },
+  { s:6, q:23, text:"Quando você conversa com amigos ou clientes próximos, como você costuma falar?", hint:"Mais direto? Mais explicativo? Mais provocador? Mais cuidadoso?" },
+  { s:6, q:24, text:"Existe algo na comunicação de outros profissionais do seu mercado que você jamais faria?", sub:"Algo que não combina com você ou com seus valores." },
+  { s:6, q:25, text:"Quando você pensa na sua comunicação ideal, como gostaria de ser percebido pelas pessoas?", hint:"Por exemplo: autoridade, provocador, didático, estratégico, acolhedor, direto, visionário…" },
+  { s:6, q:26, text:"Existe alguma parte da sua personalidade que hoje não aparece na sua comunicação, mas você sente que deveria aparecer mais?" },
+  { s:6, q:27, text:"Existe alguma história, experiência ou opinião sobre seu trabalho que você sente que deveria aparecer na sua comunicação, mas nunca soube como explicar?" },
+  { s:7, q:28, text:"Se sua marca desaparecesse amanhã, o que você acha que o mercado perderia?" }
+];
+
+function show(id) {
+  document.querySelectorAll('.screen').forEach(function(s){ s.classList.remove('active'); });
+  document.getElementById('screen-' + id).classList.add('active');
+  window.scrollTo(0, 0);
+}
+
+function startQuiz() {
+  var nome = document.getElementById('field-nome').value.trim();
+  var email = document.getElementById('field-email').value.trim();
+  var errEl = document.getElementById('identify-error');
+  if (!nome || !email) { errEl.style.display = 'block'; return; }
+  errEl.style.display = 'none';
+  respondentName = nome;
+  respondentEmail = email;
+  sessionId = nome.replace(/\s+/g,'_') + '_' + Date.now();
+  cur = 0;
+  renderQ();
+  show('question');
+}
+
+function renderQ() {
+  var q = questions[cur];
+  var pct = Math.round((cur / 28) * 100);
+  document.getElementById('prog-label').textContent = 'Pergunta ' + (cur + 1) + ' de 28';
+  var rem = 28 - cur - 1;
+  document.getElementById('prog-remaining').textContent = rem + ' restante' + (rem === 1 ? '' : 's');
+  document.getElementById('prog-fill').style.width = pct + '%';
+  document.getElementById('btn-back').style.visibility = cur === 0 ? 'hidden' : 'visible';
+  document.getElementById('btn-next').textContent = cur === 27 ? 'Concluir ✓' : 'Próxima →';
+  document.getElementById('sync-status').textContent = '';
+
+  var sec = sections[q.s - 1];
+  var html = '<div class="q-card">'
+    + '<div class="q-section-label">Pergunta ' + q.q + ' · ' + sec.label + '</div>'
+    + '<div class="q-text">' + q.text + '</div>';
+  if (q.sub)  html += '<div class="q-sub">' + q.sub + '</div>';
+  if (q.hint) html += '<div class="q-hint">' + q.hint + '</div>';
+  html += '<textarea id="ans" placeholder="Escreva aqui — quanto mais detalhe, melhor…">' + answers[cur] + '</textarea>'
+    + '<div class="q-encourage">Não se preocupe com o tamanho. Quanto mais você compartilhar, mais rico será o Blueprint.</div>'
+    + '</div>';
+  document.getElementById('question-area').innerHTML = html;
+  setTimeout(function(){ var t = document.getElementById('ans'); if (t) t.focus(); }, 60);
+}
+
+function saveLocal() {
+  var t = document.getElementById('ans');
+  if (t) answers[cur] = t.value;
+}
+
+function syncToSheet(qNum, answer) {
+  var statusEl = document.getElementById('sync-status');
+  if (statusEl) statusEl.textContent = '↑ Salvando…';
+  var params = new URLSearchParams({
+    sessionId: sessionId,
+    nome: respondentName,
+    email: respondentEmail,
+    qNum: qNum,
+    answer: answer,
+    timestamp: new Date().toISOString()
+  });
+  fetch(APPS_SCRIPT_URL + '?' + params.toString(), { method: 'GET' })
+    .then(function() {
+      if (statusEl) { statusEl.textContent = '✓ Salvo'; setTimeout(function(){ statusEl.textContent = ''; }, 2000); }
+    })
+    .catch(function() {
+      if (statusEl) { statusEl.textContent = '⚠ Sem conexão — continuando assim mesmo'; setTimeout(function(){ statusEl.textContent = ''; }, 3000); }
+    });
+}
+
+function goNext() {
+  saveLocal();
+  syncToSheet(questions[cur].q, answers[cur]);
+
+  if (cur === 27) { show('finish'); return; }
+
+  var curSec = questions[cur].s;
+  var nextSec = questions[cur + 1].s;
+  if (nextSec !== curSec) {
+    var tr = sections[curSec - 1].trans;
+    if (tr) {
+      pendingNext = cur + 1;
+      document.getElementById('trans-badge').textContent = tr.badge;
+      document.getElementById('trans-title').textContent = tr.title;
+      document.getElementById('trans-desc').textContent = tr.desc;
+      show('transition');
+      return;
+    }
+  }
+  cur++;
+  renderQ();
+}
+
+function continueTransition() {
+  cur = pendingNext;
+  renderQ();
+  show('question');
+}
+
+function goBack() {
+  saveLocal();
+  if (cur > 0) { cur--; renderQ(); }
+}
+</script>
+</body>
+</html>
